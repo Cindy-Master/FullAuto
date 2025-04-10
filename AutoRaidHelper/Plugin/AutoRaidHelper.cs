@@ -6,6 +6,7 @@ using AEAssist.CombatRoutine.Trigger;
 using AutoRaidHelper.UI;
 using AutoRaidHelper.Triggers.TriggerAction;
 using AutoRaidHelper.Triggers.TriggerCondition;
+using AutoRaidHelper.Hooks;
 
 namespace AutoRaidHelper.Plugin
 {
@@ -17,14 +18,18 @@ namespace AutoRaidHelper.Plugin
         private readonly DebugPrintTab _debugPrintTab = new();
         #region IAEPlugin Implementation
 
+
+        private ActorControlHook actorControlHook;
+
         public PluginSetting BuildPlugin()
         {
             TriggerMgr.Instance.Add("全自动小助手", new 指定职能tp指定位置().GetType());
             TriggerMgr.Instance.Add("全自动小助手", new 检测目标位置().GetType());
+            actorControlHook = new ActorControlHook();
             return new PluginSetting
             {
                 Name = "全自动小助手",
-                LimitLevel = VIPLevel.Normal
+                LimitLevel = VIPLevel.Develop
             };
         }
 
@@ -38,6 +43,7 @@ namespace AutoRaidHelper.Plugin
         {
             _automationTab.Dispose();
             _debugPrintTab.Dispose();
+            actorControlHook?.Dispose();
         }
 
         public void Update()

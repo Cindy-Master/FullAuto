@@ -243,9 +243,12 @@ namespace AutoRaidHelper.Settings
         // 最终生成的排本命令字符串（自动根据配置拼接组合）
         public string FinalSendDutyName { get; set; } = "";
 
-        // 低保统计数据：Omega 与 Sphene 低保计数
+        // 低保统计数据：龙诗、欧米茄、淑芬、伊甸、阿罗阿罗低保计数
+        public int DragonCompletedCount { get; set; }
         public int OmegaCompletedCount { get; set; }
         public int SpheneCompletedCount { get; set; }
+        public int EdenCompletedCount { get; set; }
+        public int AlalCompletedCount { get; set; }
 
         /// <summary>
         /// 更新当前地图 ID，并保存配置
@@ -363,22 +366,40 @@ namespace AutoRaidHelper.Settings
             FinalSendDutyName = finalName;
             FullAutoSettings.Instance.Save();
         }
-
-        /// <summary>
-        /// 更新 OmegaCompletedCount 并保存配置
-        /// </summary>
-        public void UpdateOmegaCompletedCount(int count)
+        
+        // 定义一个枚举类型
+        public enum DutyType : ushort
         {
-            OmegaCompletedCount = count;
-            FullAutoSettings.Instance.Save();
+            Dragon = 968,
+            Omega = 1122,
+            Alal = 1180,
+            Eden = 1238,
+            Sphene = 1243
         }
 
-        /// <summary>
-        /// 更新 SpheneCompletedCount 并保存配置
-        /// </summary>
-        public void UpdateSpheneCompletedCount(int count)
+        public void UpdateDutyCount(DutyType duty, int count)
         {
-            SpheneCompletedCount = count;
+            switch (duty)
+            {
+                case DutyType.Dragon:
+                    DragonCompletedCount = count;
+                    break;
+                case DutyType.Omega:
+                    OmegaCompletedCount = count;
+                    break;
+                case DutyType.Sphene:
+                    SpheneCompletedCount = count;
+                    break;
+                case DutyType.Eden:
+                    EdenCompletedCount = count;
+                    break;
+                case DutyType.Alal:
+                    AlalCompletedCount = count;
+                    break;
+                default:
+                    LogHelper.PrintError("未知的副本类型");
+                    return;
+            }
             FullAutoSettings.Instance.Save();
         }
     }
@@ -391,12 +412,23 @@ namespace AutoRaidHelper.Settings
         // 控制是否绘制坐标点并打印调试信息（默认启用）
         public bool PrintDebugInfo { get; set; } = true;
 
+        //控制是否打印所有ActorControl信息
+        public bool PrintActorControl { get; set; } = false;
         /// <summary>
         /// 更新 PrintDebugInfo 并保存配置
         /// </summary>
         public void UpdatePrintDebugInfo(bool print)
         {
             PrintDebugInfo = print;
+            FullAutoSettings.Instance.Save();
+        }
+
+        /// <summary>
+        /// 更新 PrintActorControl 并保存配置
+        /// </summary>
+        public void UpdatePrintActorControl(bool print)
+        {
+            PrintActorControl = print;
             FullAutoSettings.Instance.Save();
         }
     }
